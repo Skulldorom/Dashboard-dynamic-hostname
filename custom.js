@@ -1,4 +1,5 @@
-var urlExclude = "192.168.0.105";
+var ignore = ""; //this is the default url that you set in the hompage config files that does not need to be changed dynamilcally
+var urlExclude = [""]; //Any urls that are in the services.yaml that should not be changed dynamically
 
 function triggerNotification() {
   // Create a notification element with a loader
@@ -49,10 +50,7 @@ function updateLinks(callback) {
       var baseLink = link.href.split("://")[1].split("/")[0];
       var port = baseLink.split(":")[1];
       var end = link.href.split("://")[1].split("/").slice(1).join("/");
-      if (
-        baseLink.split(":")[0] !== urlExclude &&
-        baseLink.split(":")[0] !== baseURL
-      ) {
+      if (!urlExclude.includes(baseLink.split(":")[0])) {
         // if the base link is not the same as the current host change the link href to the current host
         var newLink = protocol + "://" + baseURL + ":" + port + "/" + end;
         link.href = newLink;
@@ -66,5 +64,7 @@ function updateLinks(callback) {
 }
 
 window.addEventListener("load", function () {
+  if (window.location.host.split(":")[0] === ignore) return;
+
   triggerNotification();
 });
